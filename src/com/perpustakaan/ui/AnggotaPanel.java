@@ -1,6 +1,6 @@
 package com.perpustakaan.ui;
 
-import com.perpustakaan.dao.AnggotaDAO;
+import com.perpustakaan.controller.AnggotaController;
 import com.perpustakaan.model.Anggota;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AnggotaPanel extends JPanel {
-    private AnggotaDAO dao = new AnggotaDAO();
+    private AnggotaController controller = new AnggotaController();
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtNama, txtTelepon;
@@ -79,7 +79,7 @@ public class AnggotaPanel extends JPanel {
     private void loadData() {
         try {
             tableModel.setRowCount(0);
-            List<Anggota> list = dao.getAll();
+            List<Anggota> list = controller.getAllAnggota();
             for (Anggota a : list) {
                 tableModel.addRow(new Object[]{a.getId(), a.getNama(), a.getAlamat(), a.getTelepon()});
             }
@@ -90,8 +90,7 @@ public class AnggotaPanel extends JPanel {
 
     private void saveAnggota() {
         try {
-            Anggota a = new Anggota(0, txtNama.getText(), txtAlamat.getText(), txtTelepon.getText());
-            dao.insert(a);
+            controller.addAnggota(txtNama.getText(), txtAlamat.getText(), txtTelepon.getText());
             loadData();
             clearForm();
         } catch (Exception e) {
@@ -102,8 +101,7 @@ public class AnggotaPanel extends JPanel {
     private void updateAnggota() {
         if (selectedId == -1) return;
         try {
-            Anggota a = new Anggota(selectedId, txtNama.getText(), txtAlamat.getText(), txtTelepon.getText());
-            dao.update(a);
+            controller.updateAnggota(selectedId, txtNama.getText(), txtAlamat.getText(), txtTelepon.getText());
             loadData();
             clearForm();
         } catch (Exception e) {
@@ -114,7 +112,7 @@ public class AnggotaPanel extends JPanel {
     private void deleteAnggota() {
         if (selectedId == -1) return;
         try {
-            dao.delete(selectedId);
+            controller.deleteAnggota(selectedId);
             loadData();
             clearForm();
         } catch (SQLException e) {

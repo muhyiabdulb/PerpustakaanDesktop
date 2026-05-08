@@ -1,6 +1,6 @@
 package com.perpustakaan.ui;
 
-import com.perpustakaan.dao.BukuDAO;
+import com.perpustakaan.controller.BukuController;
 import com.perpustakaan.model.Buku;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class BukuPanel extends JPanel {
-    private BukuDAO dao = new BukuDAO();
+    private BukuController controller = new BukuController();
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtJudul, txtPengarang, txtPenerbit, txtTahun;
@@ -74,7 +74,7 @@ public class BukuPanel extends JPanel {
     private void loadData() {
         try {
             tableModel.setRowCount(0);
-            List<Buku> list = dao.getAll();
+            List<Buku> list = controller.getAllBuku();
             for (Buku b : list) {
                 tableModel.addRow(new Object[]{b.getId(), b.getJudul(), b.getPengarang(), b.getPenerbit(), b.getTahun()});
             }
@@ -85,8 +85,7 @@ public class BukuPanel extends JPanel {
 
     private void saveBuku() {
         try {
-            Buku b = new Buku(0, txtJudul.getText(), txtPengarang.getText(), txtPenerbit.getText(), Integer.parseInt(txtTahun.getText()));
-            dao.insert(b);
+            controller.addBuku(txtJudul.getText(), txtPengarang.getText(), txtPenerbit.getText(), Integer.parseInt(txtTahun.getText()));
             loadData();
             clearForm();
         } catch (Exception e) {
@@ -97,8 +96,7 @@ public class BukuPanel extends JPanel {
     private void updateBuku() {
         if (selectedId == -1) return;
         try {
-            Buku b = new Buku(selectedId, txtJudul.getText(), txtPengarang.getText(), txtPenerbit.getText(), Integer.parseInt(txtTahun.getText()));
-            dao.update(b);
+            controller.updateBuku(selectedId, txtJudul.getText(), txtPengarang.getText(), txtPenerbit.getText(), Integer.parseInt(txtTahun.getText()));
             loadData();
             clearForm();
         } catch (Exception e) {
@@ -109,7 +107,7 @@ public class BukuPanel extends JPanel {
     private void deleteBuku() {
         if (selectedId == -1) return;
         try {
-            dao.delete(selectedId);
+            controller.deleteBuku(selectedId);
             loadData();
             clearForm();
         } catch (SQLException e) {
